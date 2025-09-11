@@ -1,10 +1,12 @@
 'use client'
 import { tasks } from "@/@types/task"
+import { AlertTask } from "@/components/alert-task"
 import { AppSidebar } from "@/components/app-sidebar"
 import {   DrawerNewTask } from "@/components/drawer-new-task"
-import { TableTasks } from "@/components/table-tasks"
+import { TableTasks } from "@/components/table-tasks/table-tasks"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset,SidebarProvider,SidebarTrigger, } from "@/components/ui/sidebar"
 import { api } from "@/services/api"
@@ -14,8 +16,9 @@ import { useEffect, useState } from "react"
 
 export default function Page() {
     const [data, setData] = useState<tasks[]>()
-  const [ totalTasks, setTotalTasks ] = useState<number>(0)
-  const [ filter, setFilter ] = useState<string>('');
+    const [ totalTasks, setTotalTasks ] = useState<number>(0)
+    const [ filter, setFilter ] = useState<string>('');
+    const [ pagiantionAmount, setPaginationAmount ] = useState(1)
 
     async function getTasks(){
         let params ={}
@@ -25,8 +28,10 @@ export default function Page() {
 
       try{
         const result = await api.get('/tasks' , { params: {  search: filter}});
+
         setData(result.data.tasks)
         setTotalTasks(result.data.total)
+        
         console.log(result.data.tasks)
       }catch{
       console.log("Erro ao obter os dados das tarefas")
@@ -62,11 +67,31 @@ export default function Page() {
       
 
         </header>
+      
         { 
           data && data?.length > 0 && 
            <TableTasks data={data} total={totalTasks}/>
         }
+            <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
       </SidebarInset>
+
+ 
+         
     </SidebarProvider>
   )
 }

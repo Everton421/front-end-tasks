@@ -39,12 +39,13 @@ function verifyPriority(priority:priority ){
 export function TableTasks({ data , total}:{data:tasks[] , total:number} ){
   return (
     <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[50%] text-base font-bold ">title</TableHead>
           <TableHead className="text-base font-bold" >Status</TableHead>
           <TableHead  className="text-base font-bold" >priority</TableHead>
+          <TableHead  className="text-base font-bold" >Created At</TableHead>
+
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -63,9 +64,13 @@ export function TableTasks({ data , total}:{data:tasks[] , total:number} ){
                   <span className="flex gap-5 text-base font-bold" >
                     { verifyPriority(task.priority)}  {task.priority} 
                   </span>
-               
                </TableCell>
-
+             <TableCell  >
+                  <span className="flex gap-5  font-bold" >
+                     { new Date(task.createdAt).toLocaleDateString('pt-br', { day:'2-digit', month:'short', year:'numeric'})  }  
+                  </span>
+                  
+               </TableCell>
           </TableRow>
         ))}
       </TableBody>
