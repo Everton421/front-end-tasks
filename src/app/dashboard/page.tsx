@@ -1,7 +1,7 @@
 'use client'
 import { tasks } from "@/@types/task"
 import { AppSidebar } from "@/components/app-sidebar"
-import {  ModalNewTask } from "@/components/modal-new-task"
+import {   DrawerNewTask } from "@/components/drawer-new-task"
 import { TableTasks } from "@/components/table-tasks"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,8 +10,7 @@ import { SidebarInset,SidebarProvider,SidebarTrigger, } from "@/components/ui/si
 import { api } from "@/services/api"
 import { useEffect, useState } from "react"
 
-
-
+ 
 
 export default function Page() {
     const [data, setData] = useState<tasks[]>()
@@ -58,7 +57,7 @@ export default function Page() {
                <Button onClick={()=> getTasks()}>
                 filter
                </Button>
-             <ModalNewTask/>
+             <DrawerNewTask/>
           </div>
       
 
