@@ -10,6 +10,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset,SidebarProvider,SidebarTrigger, } from "@/components/ui/sidebar"
 import { api } from "@/services/api"
+import { Preahvihear } from "next/font/google"
 import { useEffect, useState } from "react"
 
  
@@ -18,7 +19,29 @@ export default function Page() {
     const [data, setData] = useState<tasks[]>()
     const [ totalTasks, setTotalTasks ] = useState<number>(0)
     const [ filter, setFilter ] = useState<string>('');
-    const [ pagiantionAmount, setPaginationAmount ] = useState(1)
+    const [ paginationAmount, setPaginationAmount ] = useState(1)
+    const [ numberPage, setNumberPage ] = useState(1);
+
+      function nextPage(){
+        const tasksPerPage = 10;
+        const totalPages = Math.ceil(totalTasks / tasksPerPage);
+  
+          setPaginationAmount( paginationAmount + 1  )
+          if (paginationAmount < totalPages) {
+            setPaginationAmount(paginationAmount + 1);
+          }
+        }
+
+      
+        function prevPage(){
+          if(paginationAmount === 1 ){
+            return
+          }
+        if( paginationAmount >= 1 ){
+          setPaginationAmount( paginationAmount - 1  )
+        }
+
+      }
 
     async function getTasks(){
         let params ={}
@@ -27,7 +50,7 @@ export default function Page() {
       }
 
       try{
-        const result = await api.get('/tasks' , { params: {  search: filter}});
+        const result = await api.get('/tasks' , { params: { orderBy:'id', search: filter, page:paginationAmount }});
 
         setData(result.data.tasks)
         setTotalTasks(result.data.total)
@@ -40,7 +63,7 @@ export default function Page() {
 
     useEffect(()=>{
       getTasks()
-    },[])
+    },[paginationAmount])
      
      
 
@@ -72,21 +95,26 @@ export default function Page() {
           data && data?.length > 0 && 
            <TableTasks data={data} total={totalTasks}/>
         }
-            <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
+        <Pagination>
+          <PaginationContent>
+            
+            <PaginationItem onClick={()=>prevPage()} >
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationLink href="#">{ paginationAmount }</PaginationLink>
+            </PaginationItem>
+            
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            
+            <PaginationItem onClick={()=>nextPage()} >
+              <PaginationNext href="#" />
+            </PaginationItem>
+          
+          </PaginationContent>
       </Pagination>
       </SidebarInset>
 

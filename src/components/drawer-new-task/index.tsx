@@ -73,20 +73,6 @@ export function DrawerNewTask() {
 
   }
 
-
-
-  if (loadingSave) {
-    //    <AlertTask
-    //    title="teste"
-    //    description="teste"
-    //    />
-    // 
-    <div className="flex w-full">
-      <ThreeDot color="blue" />
-    </div>
-
-  }
-
   return (
   <>
   
@@ -139,11 +125,11 @@ export function DrawerNewTask() {
 
     </Drawer>
      <AlertTask
-    description={descriptionResponse}
-    setVisible={setVisibleAlert }
-    title={titleResponse}
-    visible={visibleAlert}
-  />
+      description={descriptionResponse}
+      setVisible={setVisibleAlert }
+      title={titleResponse}
+      visible={visibleAlert}
+    />
  
 </>
 
