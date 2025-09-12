@@ -34,6 +34,7 @@ function verifyPriority(priority:priority ){
         return <CircleArrowRight color="blue" />    
     }
 }
+         
 
 
 export function TableTasks({ data , total}:{data:tasks[] , total:number} ){

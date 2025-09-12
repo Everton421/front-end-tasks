@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { CircleArrowDown, CircleArrowRight, CircleArrowUp } from "lucide-react"
 
 type props = {
     arrPriority:string[] ,
@@ -26,7 +27,16 @@ export function SelectPriorityTask({ arrPriority, setSpriority    }: props) {
             {
                 arrPriority && arrPriority.length > 0 &&
                 arrPriority.map((i)=>(
-                  <SelectItem  key={i} value={i} onClick={()=> setSpriority(i)} > {i} </SelectItem>
+                  <SelectItem  key={i} value={i} onClick={()=> setSpriority(i)} >
+                    <div className=" justify-between flex items-center">
+                        {i} 
+                         { i ==='high' && <CircleArrowUp color="blue"/>  }   
+                           { i ==='low' && <CircleArrowDown color="blue"/>      }    
+                          { i ==='medium' && <CircleArrowRight color="blue" /> } 
+                          
+                     </div> 
+        
+                   </SelectItem>
 
                 ))
             }

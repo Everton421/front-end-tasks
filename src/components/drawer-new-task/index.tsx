@@ -91,14 +91,17 @@ export function DrawerNewTask() {
             <DrawerDescription>Creating a new task.</DrawerDescription>
 
           </DrawerHeader>
-          {loadingSave ?
-            <div className="grid gap-3">
-              <ThreeDot color="blue" />
+           {  loadingSave ?
+            <div className="grid gap-3 h-70">
+              <ThreeDot color="black" />
             </div>
             :
 
             <>
               <div className="grid gap-3">
+                <Label htmlFor="username-1">Priority</Label>
+                <SelectPriorityTask arrPriority={priority} setSpriority={setSpriority} />
+
                 <DrawerTitle className=" text-start" >Title</DrawerTitle>
                 <Input placeholder="Updating database client 134..."
                   onChange={(e) => setTitle(String(e.target.value))}
@@ -108,9 +111,7 @@ export function DrawerNewTask() {
                 <Textarea
                   onChange={(e) => setDescription(String(e.target.value))}
                 />
-                <Label htmlFor="username-1">Priority</Label>
-
-                <SelectPriorityTask arrPriority={priority} setSpriority={setSpriority} />
+                
               </div>
               <DrawerFooter>
                 <Button onClick={() => register()}>Save new Task</Button>

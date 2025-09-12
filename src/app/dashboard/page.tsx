@@ -10,11 +10,14 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarInset,SidebarProvider,SidebarTrigger, } from "@/components/ui/sidebar"
 import { api } from "@/services/api"
 import { useEffect, useState } from "react"
+import { OrbitProgress } from 'react-loading-indicators'
 
  
 
 export default function Page() {
     const [data, setData] = useState<tasks[]>()
+    const [ loadingData, setLoadingData ] = useState(false);
+    const [ errorFetchingTasks,setErrorFetchingTasks ] = useState(false);
     const [ totalTasks, setTotalTasks ] = useState<number>(0)
     const [ filter, setFilter ] = useState<string>('');
     const [ paginationAmount, setPaginationAmount ] = useState(1)
@@ -46,17 +49,18 @@ export default function Page() {
       if( filter && filter !== ''   ){
         params = { search: filter}
       }
-
       try{
+       setLoadingData(true)
         const result = await api.get('/tasks' , { params: { orderBy:'id', search: filter, page:paginationAmount }});
-
         setData(result.data.tasks)
         setTotalTasks(result.data.total)
-        
-        console.log(result.data.tasks)
       }catch{
-      console.log("Erro ao obter os dados das tarefas")
+       setLoadingData(false)
+       console.log("Erro ao obter os dados das tarefas")
+      }finally{
+       setLoadingData(false)
       }
+
     }
 
     useEffect(()=>{
@@ -89,11 +93,17 @@ export default function Page() {
 
         </header>
       
-        { 
+        {  loadingData ?
+          ( <div className="w-full items-center justify-center h-full flex">
+             <OrbitProgress variant="track-disc" speedPlus={4} easing="linear" color="black" />        
+            </div>
+          )
+          :
           data && data?.length > 0 && 
            <TableTasks data={data} total={totalTasks}/>
         }
-        <Pagination>
+        <div className=" fixed bottom-0 left-0 w-full bg-white border-t z-50 ">
+         <Pagination   >
           <PaginationContent>
             
             <PaginationItem onClick={()=>prevPage()} >
@@ -113,11 +123,10 @@ export default function Page() {
             </PaginationItem>
           
           </PaginationContent>
-      </Pagination>
+       </Pagination>
+      </div>
       </SidebarInset>
 
- 
-         
     </SidebarProvider>
   )
 }
