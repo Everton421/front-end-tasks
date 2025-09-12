@@ -1,8 +1,7 @@
 'use client'
 import { tasks } from "@/@types/task"
-import { AlertTask } from "@/components/alert-task"
 import { AppSidebar } from "@/components/app-sidebar"
-import {   DrawerNewTask } from "@/components/drawer-new-task"
+import { DrawerNewTask } from "@/components/drawer-new-task"
 import { TableTasks } from "@/components/table-tasks/table-tasks"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,7 +9,6 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset,SidebarProvider,SidebarTrigger, } from "@/components/ui/sidebar"
 import { api } from "@/services/api"
-import { Preahvihear } from "next/font/google"
 import { useEffect, useState } from "react"
 
  
@@ -23,7 +21,7 @@ export default function Page() {
     const [ numberPage, setNumberPage ] = useState(1);
 
       function nextPage(){
-        const tasksPerPage = 10;
+        const tasksPerPage = 9;
         const totalPages = Math.ceil(totalTasks / tasksPerPage);
   
           setPaginationAmount( paginationAmount + 1  )
