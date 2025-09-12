@@ -21,7 +21,7 @@ export default function Page() {
     const [ numberPage, setNumberPage ] = useState(1);
 
       function nextPage(){
-        const tasksPerPage = 9;
+        const tasksPerPage = 10;
         const totalPages = Math.ceil(totalTasks / tasksPerPage);
   
           setPaginationAmount( paginationAmount + 1  )
