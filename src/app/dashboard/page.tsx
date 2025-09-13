@@ -1,6 +1,7 @@
 'use client'
 import { tasks } from "@/@types/task"
 import { AppSidebar } from "@/components/app-sidebar"
+import { DrawerEditTask } from "@/components/drawer-edit-task"
 import { DrawerNewTask } from "@/components/drawer-new-task"
 import { TableTasks } from "@/components/table-tasks/table-tasks"
 import { Button } from "@/components/ui/button"
@@ -22,7 +23,8 @@ export default function Page() {
     const [ filter, setFilter ] = useState<string>('');
     const [ paginationAmount, setPaginationAmount ] = useState(1)
     const [ numberPage, setNumberPage ] = useState(1);
-
+    const [ visibleEditTask ,setVisibleEditTask] = useState(false)
+     const [ taskToBeEdited , setTaskToBeEdited ] = useState<tasks>()
       function nextPage(){
         const tasksPerPage = 10;
         const totalPages = Math.ceil(totalTasks / tasksPerPage);
@@ -32,7 +34,6 @@ export default function Page() {
             setPaginationAmount(paginationAmount + 1);
           }
         }
-
       
         function prevPage(){
           if(paginationAmount === 1 ){
@@ -42,7 +43,7 @@ export default function Page() {
           setPaginationAmount( paginationAmount - 1  )
         }
 
-      }
+        }
 
     async function getTasks(){
         let params ={}
@@ -67,7 +68,10 @@ export default function Page() {
       getTasks()
     },[paginationAmount])
      
-     
+     function editTask(task:tasks){
+        setVisibleEditTask(true)
+        setTaskToBeEdited(task)
+     }
 
   return (
     <SidebarProvider>
@@ -88,6 +92,8 @@ export default function Page() {
                 filter
                </Button>
              <DrawerNewTask/>
+             <DrawerEditTask task={taskToBeEdited} openEditTask={visibleEditTask} />
+
           </div>
       
 
@@ -100,7 +106,7 @@ export default function Page() {
           )
           :
           data && data?.length > 0 && 
-           <TableTasks data={data} total={totalTasks}/>
+           <TableTasks data={data} total={totalTasks} editTask={editTask}/>
         }
         <div className=" fixed bottom-0 left-0 w-full bg-white border-t z-50 ">
          <Pagination   >

@@ -37,7 +37,7 @@ function verifyPriority(priority:priority ){
          
 
 
-export function TableTasks({ data , total}:{data:tasks[] , total:number} ){
+export function TableTasks({ data , total, editTask }:{data:tasks[] , total:number, editTask:(i:tasks)=>void} ){
   return (
     <Table>
       <TableHeader>
@@ -51,7 +51,7 @@ export function TableTasks({ data , total}:{data:tasks[] , total:number} ){
       </TableHeader>
       <TableBody>
         {data.map((task) => (
-          <TableRow key={ task.id}>
+          <TableRow key={ task.id} onClick={()=> editTask(task)}>
             <TableCell className="font-medium">{task.title}</TableCell>
             <TableCell   >
                 <div >

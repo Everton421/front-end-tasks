@@ -10,5 +10,5 @@
         createdAt : Date
         }
 
-
-        export type priorityTask =  ['high','low','medium']
+        export type priority = 'high' | 'low' | 'medium'
+        export type arrPriorityTask =  ['high','low','medium']

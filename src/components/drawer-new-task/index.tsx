@@ -22,11 +22,12 @@ import { DialogTitle } from "../ui/dialog"
 import { api } from "@/services/api"
 import { ThreeDot } from 'react-loading-indicators'
 import { AlertTask } from "../alert-task"
+import { arrPriorityTask, priority } from "@/@types/task"
 
 
 export function DrawerNewTask() {
-  const [priority] = useState(['high', 'low', 'medium'])
-  const [Spriority, setSpriority] = useState<string>('low');
+  const [priority] = useState<arrPriorityTask>(['high', 'low', 'medium'])
+  const [Spriority, setSpriority] = useState<priority>('low');
   const [title, setTitle] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [loadingSave, setLoadingSave] = useState(false);
@@ -100,7 +101,7 @@ export function DrawerNewTask() {
             <>
               <div className="grid gap-3">
                 <Label htmlFor="username-1">Priority</Label>
-                <SelectPriorityTask arrPriority={priority} setSpriority={setSpriority} />
+                <SelectPriorityTask arrPriority={priority} setSpriority={setSpriority} Spriority={Spriority} />
 
                 <DrawerTitle className=" text-start" >Title</DrawerTitle>
                 <Input placeholder="Updating database client 134..."
