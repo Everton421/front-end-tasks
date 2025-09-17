@@ -23,7 +23,7 @@ export default function Page() {
     const [ filter, setFilter ] = useState<string>('');
     const [ paginationAmount, setPaginationAmount ] = useState(1)
     const [ numberPage, setNumberPage ] = useState(1);
-    const [ visibleEditTask ,setVisibleEditTask] = useState(false)
+    const [ visibleEditTask ,setVisibleEditTask] = useState<boolean>(false)
      const [ taskToBeEdited , setTaskToBeEdited ] = useState<tasks>()
       function nextPage(){
         const tasksPerPage = 10;
@@ -92,7 +92,10 @@ export default function Page() {
                 filter
                </Button>
              <DrawerNewTask/>
-             <DrawerEditTask task={taskToBeEdited} openEditTask={visibleEditTask} />
+             {
+               taskToBeEdited && 
+              <DrawerEditTask task={taskToBeEdited}  openDrawer={visibleEditTask}  setOpenDrawer={setVisibleEditTask}      />
+              }
 
           </div>
       

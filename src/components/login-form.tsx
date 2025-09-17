@@ -12,44 +12,42 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { api } from "@/services/api"
+import { useState } from "react"
  
 
 
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 
- 
+ const [ email, setEmail ] = useState<string>('');
+ const [ password, setPassword ] = useState<string>('');
 
   async function signin (){
     try{
         const result = await api.post('/sessions',
           {
-            email: "Vitor_Nogueira29@hotmail.com",
-            password :"123456"
+            email: email,
+            password :password
           }
       )
-
+        
         console.log(result)
-    }catch{ 
+    }catch(e){ 
+        console.log("Erro ao tentar fazer o login ", e )
 
     }
 }
 
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card  >
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle className="text-center font-bold text-3xl"> Login</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -57,6 +55,7 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                    onChange={(e)=> setEmail(String(e.target.value)) }
               
                   required
                 />
@@ -71,7 +70,12 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                  <Input 
+                  id="password"
+                  type="password"
+                   required 
+                    onChange={(e)=> setPassword(String(e.target.value)) }
+                  />
               </div>
               <div className="flex flex-col gap-3">
                 <Button
@@ -91,9 +95,7 @@ export function LoginForm({
                 Sign up
               </a>
             </div>
-          </form>
         </CardContent>
       </Card>
-    </div>
   )
 }

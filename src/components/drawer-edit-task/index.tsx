@@ -24,13 +24,16 @@ import { ThreeDot } from 'react-loading-indicators'
 import { AlertTask } from "../alert-task"
 import { arrPriorityTask, priority, tasks } from "@/@types/task"
 
+type props = {
+task: tasks,
+openDrawer:boolean, 
+setOpenDrawer : (value:boolean)=>void
+}
 
-export function DrawerEditTask({task, openEditTask , setOpenEditTak}: { task: tasks, openEditTask:boolean, setOpenEditTak: (i:boolean)=>{}}) {
+export function DrawerEditTask({task, openDrawer , setOpenDrawer}:props) {
 
   const [priority] = useState<arrPriorityTask>(['high', 'low', 'medium'])
   const [Spriority, setSpriority] = useState<priority>('low');
-  const [title, setTitle] = useState<string>();
-  const [description, setDescription] = useState<string>();
   const [loadingSave, setLoadingSave] = useState(false);
   const [visibleAlert, setVisibleAlert] = useState(false);
 
@@ -43,54 +46,47 @@ export function DrawerEditTask({task, openEditTask , setOpenEditTak}: { task: ta
       setLoadingSave(true)
       task.priority = Spriority
       console.log(task)
-  //    const resultCreateTask = await api.post('/tasks',
-  //      {
-  //        priority: Spriority,
-  //        title: title,
-  //        description: description,
-  //        status: 'pendente'
-  //      }
-  //    )
+       const resultCreateTask = await api.put(`/tasks/${task.id}`,
+        {
+          title: task.title,
+          description: task.description,
+          status: task.status,
+          priority: task.priority
+        }
+       )
 
-      //if (resultCreateTask.status === 201) {
-      //  console.log(resultCreateTask.data);
-      //  setOpen(false)
-      //  setVisibleAlert(true);
-      //  setTitleResponse('Ok');
-      //  setDescriptionResponse("Task registered sucessfully")
-      //}
+       if (resultCreateTask.status === 200) {
+         console.log(resultCreateTask.data);
+         setOpenDrawer(false)
+         setVisibleAlert(true);
+         setTitleResponse('Ok');
+         setDescriptionResponse("Task registered sucessfully")
+       }
       setLoadingSave(false)
 
     } catch (e) {
       setLoadingSave(false)
-       setOpenEditTak(false)
+       setOpenDrawer(false)
         setVisibleAlert(true);
         setTitleResponse('Erro');
         setDescriptionResponse("Error registering task")
 
-      console.log(`Erro ao tentar registrar uma nova tarefa`)
+      console.log(`Erro ao tentar atualiza uma tarefa`, e )
     } finally {
-      setLoadingSave(false)
-    }
+       setOpenDrawer(false)
+      setLoadingSave(false)    }
 
   }
 
   return (
   <>
   
-    <Drawer open={openEditTask} onOpenChange={setOpenEditTak}>
-      <DrawerTrigger asChild>
-        <Button  >
-          <FolderPlus /> Add New Task
-        </Button>
-      </DrawerTrigger>
-
+    <Drawer open={openDrawer} >
       <DrawerContent>
-
         <div className="mx-auto w-[70%]  ">
           <DrawerHeader >
-            <DialogTitle>New Task</DialogTitle>
-            <DrawerDescription>Creating a new task.</DrawerDescription>
+            <DialogTitle>Editing Task</DialogTitle>
+            <DrawerDescription>Editing task.</DrawerDescription>
 
           </DrawerHeader>
            {  loadingSave ?
@@ -123,7 +119,7 @@ export function DrawerEditTask({task, openEditTask , setOpenEditTak}: { task: ta
               <DrawerFooter>
                 <Button onClick={() => register()}>Save new Task</Button>
                 <DrawerClose asChild>
-                  <Button variant="outline" onClick={()=> setOpenEditTak(false)}>Cancel</Button>
+                  <Button variant="outline" onClick={ ()=> setOpenDrawer(false)}>Cancel</Button>
                 </DrawerClose>
               </DrawerFooter>
             </>
@@ -144,3 +140,6 @@ export function DrawerEditTask({task, openEditTask , setOpenEditTak}: { task: ta
 
   )
 }
+
+
+ 
