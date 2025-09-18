@@ -6,7 +6,7 @@ type props = {
     setVisible:(i:boolean)=>void,
      visible:boolean
 }
-export function AlertTask({ title, description,  setVisible,visible }: props ){
+export function AlertLogin({ title, description,  setVisible,visible }: props ){
         return(
       <AlertDialog open={visible} onOpenChange={()=>{}}>
             <AlertDialogContent>

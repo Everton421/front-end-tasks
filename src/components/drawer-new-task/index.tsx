@@ -19,13 +19,19 @@ import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
 import { SelectPriorityTask } from "../select-priority-task"
 import { DialogTitle } from "../ui/dialog"
-import { api } from "@/services/api"
+ 
 import { ThreeDot } from 'react-loading-indicators'
 import { AlertTask } from "../alert-task"
 import { arrPriorityTask, priority } from "@/@types/task"
+import { useAuth } from "@/app/contexts/AuthContex"
+import { configApi } from "@/services/api"
 
 
 export function DrawerNewTask() {
+
+    const api = configApi()
+
+
   const [priority] = useState<arrPriorityTask>(['high', 'low', 'medium'])
   const [Spriority, setSpriority] = useState<priority>('low');
   const [title, setTitle] = useState<string>();
@@ -37,17 +43,29 @@ export function DrawerNewTask() {
   const [descriptionResponse, setDescriptionResponse] = useState('');
 
   const [ open, setOpen ] = useState(false);
+    const { user,  logout }:any = useAuth();
 
   async function register() {
+    if(!user.token ) {
+       setOpen(false)
+        setVisibleAlert(true);
+        setTitleResponse('Erro');
+        setDescriptionResponse("token not found")
+    }
     try {
       setLoadingSave(true)
-      const resultCreateTask = await api.post('/tasks',
-        {
-          priority: Spriority,
-          title: title,
-          description: description,
-          status: 'pendente'
-        }
+      const dataPost =     {
+              priority: Spriority,
+              title: title,
+              description: description,
+              status: 'pendente'
+         }
+      const resultCreateTask = await api.post('/tasks', dataPost,{
+        headers: {
+                 authorization: user.token 
+            },
+      }
+       
       )
 
       if (resultCreateTask.status === 201) {

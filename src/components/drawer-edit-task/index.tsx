@@ -19,10 +19,12 @@ import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
 import { SelectPriorityTask } from "../select-priority-task"
 import { DialogTitle } from "../ui/dialog"
-import { api } from "@/services/api"
+import {  configApi } from "@/services/api"
 import { ThreeDot } from 'react-loading-indicators'
 import { AlertTask } from "../alert-task"
-import { arrPriorityTask, priority, tasks } from "@/@types/task"
+import { arrPriorityTask, arrStatus, priority, status, tasks } from "@/@types/task"
+import { SelectStatusTask } from "../select-status"
+import { useAuth } from "@/app/contexts/AuthContex"
 
 type props = {
 task: tasks,
@@ -31,30 +33,40 @@ setOpenDrawer : (value:boolean)=>void
 }
 
 export function DrawerEditTask({task, openDrawer , setOpenDrawer}:props) {
-
+const api = configApi();
   const [priority] = useState<arrPriorityTask>(['high', 'low', 'medium'])
-  const [Spriority, setSpriority] = useState<priority>('low');
+  const [ status ] = useState<arrStatus>(['pendente' , 'em-andamento', 'concluido', 'cancelado'])
+  const [Spriority, setSpriority] = useState<priority>( task.priority);
+  const [ sStatus, setStatus] = useState <status>(task.status)
   const [loadingSave, setLoadingSave] = useState(false);
   const [visibleAlert, setVisibleAlert] = useState(false);
 
   const [titleResponse, setTitleResponse] = useState('');
   const [descriptionResponse, setDescriptionResponse] = useState('');
+    const { user,  logout }:any = useAuth();
 
 
   async function register() {
     try {
-      setLoadingSave(true)
+      
+    // setLoadingSave(true)
       task.priority = Spriority
-      console.log(task)
-       const resultCreateTask = await api.put(`/tasks/${task.id}`,
-        {
-          title: task.title,
-          description: task.description,
-          status: task.status,
-          priority: task.priority
-        }
-       )
+      task.status = sStatus
+       console.log(task)
+   const dataUpdate =   {
+           title: task.title,
+           description: task.description,
+           status: task.status,
+           priority: task.priority,
+          };
 
+      const resultCreateTask = await api.put(`/tasks/${task.id}`,dataUpdate ,{
+             headers: {
+                 authorization: user.token 
+            },
+        } 
+          )
+         
        if (resultCreateTask.status === 200) {
          console.log(resultCreateTask.data);
          setOpenDrawer(false)
@@ -63,7 +75,9 @@ export function DrawerEditTask({task, openDrawer , setOpenDrawer}:props) {
          setDescriptionResponse("Task registered sucessfully")
        }
       setLoadingSave(false)
-
+     
+     
+ 
     } catch (e) {
       setLoadingSave(false)
        setOpenDrawer(false)
@@ -72,6 +86,8 @@ export function DrawerEditTask({task, openDrawer , setOpenDrawer}:props) {
         setDescriptionResponse("Error registering task")
 
       console.log(`Erro ao tentar atualiza uma tarefa`, e )
+       console.log(task)
+
     } finally {
        setOpenDrawer(false)
       setLoadingSave(false)    }
@@ -99,6 +115,9 @@ export function DrawerEditTask({task, openDrawer , setOpenDrawer}:props) {
               <div className="grid gap-3">
                 <Label htmlFor="username-1">Priority</Label>
                 <SelectPriorityTask arrPriority={priority} setSpriority={setSpriority} Spriority={task && task.priority} />
+
+                <Label htmlFor="username-1">Status</Label>
+                <SelectStatusTask  Sstatus={task.status} arrStatus={status} setSstatus={setStatus} />
 
                 <DrawerTitle className=" text-start" >Title</DrawerTitle>
                 <Input placeholder="Updating database client 134..."

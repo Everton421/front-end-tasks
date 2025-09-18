@@ -1,7 +1,28 @@
 import axios from "axios";
 
-export const api = axios.create({
-    baseURL:'https://api-tasks-9sex.onrender.com',
-       headers:{ 'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYWE5ODQ0MS03OGE3LTQ4MWMtOTYzYi0yOWQ1YmZiOTQ3ZjciLCJyb2xlIjoic3Vwb3J0IiwiaWF0IjoxNzU3NTM3NDk0fQ.q-C_XzoVg4NAfRaEUIcxSFeqxXQ6hWHH0SbtLe3SBQU'}
+export function configApi   ()  {
+
+  const api = axios.create({
+    baseURL:'https://api-tasks-9sex.onrender.com' ,
+    
        
 })
+
+
+  // Interceptor para adicionar headers dinâmicosz
+  api.interceptors.request.use(
+      async (config) => {
+          // Adiciona o CNPJ se o usuário estiver definido
+               //config.headers["authorization"] = `token h43895jt9858094bun6098grubn48u59dsgfg234543tf `;
+              
+             //   config.headers["cnpj"] = 57473685000100
+          return config;
+      },
+
+      (error) => {
+          return Promise.reject(error);
+      }
+  );
+
+  return api;
+};

@@ -11,37 +11,75 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { api } from "@/services/api"
+import {  configApi } from "@/services/api"
 import { useState } from "react"
- 
+import { useDispatch, useSelector } from "react-redux"
+import { useAuth } from "@/app/contexts/AuthContex"
 
+import { useRouter } from "next/navigation";
+import { AlertLogin } from "./alert-login"
+import { ThreeDot } from "react-loading-indicators"
 
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 
+const router = useRouter();
+const api = configApi();
+
  const [ email, setEmail ] = useState<string>('');
  const [ password, setPassword ] = useState<string>('');
+  const [ loadingLogin, setLoadingLogin ] = useState(false)
+ const [ invalidCredentials , setInvalidCredentials ] = useState(false);
+
+    const { setUser  }:any = useAuth()
+
 
   async function signin (){
     try{
+      setLoadingLogin(true)
         const result = await api.post('/sessions',
           {
             email: email,
             password :password
           }
       )
-        
-        console.log(result)
-    }catch(e){ 
-        console.log("Erro ao tentar fazer o login ", e )
 
+        if( result.status === 200 ){
+          const userData =   { 
+                  email: email,
+                  senha: password,
+                  token:result.data.token
+                }
+
+          setUser(  userData  )
+
+            localStorage.setItem('authUser', JSON.stringify(userData));
+        }
+      setLoadingLogin(false)
+
+        router.push('/dashboard')  
+    }catch(e){ 
+      setInvalidCredentials(true)
+      setLoadingLogin(false)
+
+    }finally{
+      setLoadingLogin(false)
     }
 }
 
 
   return (
-      <Card  >
+    <> 
+    {
+       loadingLogin ? (
+      <div>
+            <ThreeDot variant="bounce" color="#000" size="medium" text="" textColor="" />
+        </div>
+      )
+     :(
+        <Card  >
         <CardHeader>
+      
           <CardTitle className="text-center font-bold text-3xl"> Login</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
@@ -95,7 +133,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 Sign up
               </a>
             </div>
+
+          <AlertLogin   
+          description="Invalid credentials!"
+          setVisible={setInvalidCredentials}
+          title="Error!"
+          visible={invalidCredentials}
+          />
+   
+
         </CardContent>
       </Card>
+      )}
+      </>
   )
 }

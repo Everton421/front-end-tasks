@@ -9,23 +9,28 @@ import { Input } from "@/components/ui/input"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset,SidebarProvider,SidebarTrigger, } from "@/components/ui/sidebar"
-import { api } from "@/services/api"
 import { useEffect, useState } from "react"
-import { OrbitProgress } from 'react-loading-indicators'
-
- 
+import { OrbitProgress, ThreeDot } from 'react-loading-indicators'
+import { useAuth } from "../contexts/AuthContex" 
+import { useRouter } from "next/navigation"
+import { configApi } from "@/services/api"
 
 export default function Page() {
+  const api = configApi();
+  
     const [data, setData] = useState<tasks[]>()
     const [ loadingData, setLoadingData ] = useState(false);
-    const [ errorFetchingTasks,setErrorFetchingTasks ] = useState(false);
     const [ totalTasks, setTotalTasks ] = useState<number>(0)
     const [ filter, setFilter ] = useState<string>('');
     const [ paginationAmount, setPaginationAmount ] = useState(1)
     const [ numberPage, setNumberPage ] = useState(1);
     const [ visibleEditTask ,setVisibleEditTask] = useState<boolean>(false)
-     const [ taskToBeEdited , setTaskToBeEdited ] = useState<tasks>()
-      function nextPage(){
+    const [ taskToBeEdited , setTaskToBeEdited ] = useState<tasks>()
+    
+    const { user,  logout }:any = useAuth();
+    const router  = useRouter();
+      
+  function nextPage(){
         const tasksPerPage = 10;
         const totalPages = Math.ceil(totalTasks / tasksPerPage);
   
@@ -45,14 +50,31 @@ export default function Page() {
 
         }
 
-    async function getTasks(){
+    useEffect(()=>{
+      if( user && !user.loading && !user){
+        router.push('/')
+      }
+    },[ paginationAmount, user, logout ])
+
+
+ 
+
+
+       async function getTasks(){
+    
+        
         let params ={}
       if( filter && filter !== ''   ){
         params = { search: filter}
       }
       try{
        setLoadingData(true)
-        const result = await api.get('/tasks' , { params: { orderBy:'id', search: filter, page:paginationAmount }});
+        const result = await api.get('/tasks' , 
+          {
+             params: { orderBy:'id', search: filter, page:paginationAmount },
+               headers:{ 'Authorization': user.token}
+
+            });
         setData(result.data.tasks)
         setTotalTasks(result.data.total)
       }catch{
@@ -65,13 +87,34 @@ export default function Page() {
     }
 
     useEffect(()=>{
+     if( user  ){
       getTasks()
-    },[paginationAmount])
+     } 
+ 
+
+    },[ paginationAmount, user ])
      
+
+ 
+
      function editTask(task:tasks){
         setVisibleEditTask(true)
         setTaskToBeEdited(task)
      }
+
+    
+  if ( user && user.loading   ) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ThreeDot variant="bounce" color="#000" size="medium" />
+      </div>
+    );
+  }
+   
+  function sair(){
+    router.push('/')
+    logout()
+  }
 
   return (
     <SidebarProvider>
@@ -87,7 +130,7 @@ export default function Page() {
           <Input
               placeholder="filter tasks..."
               onChange={(e)=>   setFilter(String(e.target.value))}
-               />
+           />
                <Button onClick={()=> getTasks()}>
                 filter
                </Button>
@@ -96,9 +139,14 @@ export default function Page() {
                taskToBeEdited && 
               <DrawerEditTask task={taskToBeEdited}  openDrawer={visibleEditTask}  setOpenDrawer={setVisibleEditTask}      />
               }
-
           </div>
-      
+        <div className=" w-full  justify-end flex gap-5 ">
+            <span className="font-bold" > {user && user.email }</span> 
+              <Button 
+              onClick={()=> sair()}>
+                  logout
+              </Button>
+        </div>
 
         </header>
       
