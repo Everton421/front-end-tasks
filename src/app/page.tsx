@@ -1,6 +1,4 @@
 import { LoginForm } from "@/components/login-form";
-import Image from "next/image";
-import { GalleryVerticalEnd } from "lucide-react"
 
 export default function Home() {
   return (

@@ -23,7 +23,6 @@ export default function Page() {
     const [ totalTasks, setTotalTasks ] = useState<number>(0)
     const [ filter, setFilter ] = useState<string>('');
     const [ paginationAmount, setPaginationAmount ] = useState(1)
-    const [ numberPage, setNumberPage ] = useState(1);
     const [ visibleEditTask ,setVisibleEditTask] = useState<boolean>(false)
     const [ taskToBeEdited , setTaskToBeEdited ] = useState<tasks>()
     
